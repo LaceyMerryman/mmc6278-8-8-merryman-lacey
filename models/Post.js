@@ -33,4 +33,18 @@ const PostSchema = new Schema({
   }
 });
 
-PostSc
+// Turns the first five words of the title and lowercases them
+// and joins them on hyphens
+PostSchema.pre('save', async function (next) {
+  if (!this.slug) {
+    this.slug = this.title
+      .split(' ')
+      .slice(0, 5)
+      .join('-')
+      .toLowerCase()
+      .replace(/[',.*?!\\$@;:"]/g, ""); // remove special characters
+  }
+  next();
+});
+
+module.exports = models.Post || model('Post', PostSchema);
